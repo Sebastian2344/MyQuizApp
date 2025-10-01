@@ -1,24 +1,36 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../model/quiz_model.dart';
+//import '../../model/quiz_model.dart';
 import '../bloc/game_bloc.dart';
 import 'game_alert_dialog.dart';
 
 class Game extends StatefulWidget {
-  const Game({Key? key}) : super(key: key);
+  const Game({super.key,required this.isNewGame});
+  final bool isNewGame;
 
   @override
-  State<Game> createState() => GameState();
+  State<Game> createState() => _GameState();
 }
 
-class GameState extends State<Game> {
+class _GameState extends State<Game> {
+  final Color tloOdp = const Color.fromARGB(255, 114, 118, 112);
 
-  Color tloOdp = const Color.fromARGB(255, 114, 118, 112);
-  Color tloOdp2 = const Color.fromARGB(255, 157, 161, 156);
-  Color tloOdpPopr = Colors.green;
-  Color tloOdpZla = const Color.fromARGB(255, 253, 4, 4);
+  final Color tloOdp2 = const Color.fromARGB(255, 157, 161, 156);
+
+  final Color tloOdpPopr = Colors.green;
+
+  final Color tloOdpZla = const Color.fromARGB(255, 253, 4, 4);
+
+  @override
+  void initState() {
+    widget.isNewGame &&
+            context.read<QuizBloc>().repository.numerPytania > 1
+        ? context.read<QuizBloc>().add(const QuizReset(true, 1))
+        : null;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +39,21 @@ class GameState extends State<Game> {
         automaticallyImplyLeading: false,
         title: const Text('QUIZ'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              context.go('/');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              context.go('/');
+              context.read<QuizBloc>().add(const QuizReset(false, 1));
+            },
+          ),
+        ],
       ),
       body: Center(
         child: BlocBuilder<QuizBloc, QuizState>(
@@ -35,9 +62,13 @@ class GameState extends State<Game> {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is Error) {
-              return Center(child: Padding(
+              return Center(
+                  child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('error: ${state.error}',style: const TextStyle(color: Colors.white),),
+                child: Text(
+                  'error: ${state.error}',
+                  style: const TextStyle(color: Colors.white),
+                ),
               ));
             }
             if (state is QuizLoaded) {
@@ -63,7 +94,8 @@ class GameState extends State<Game> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                             context.read<QuizBloc>().add(Update(true,state.dobryIndex,state.quiz,index));                    
+                            context.read<QuizBloc>().add(Update(
+                                true, state.dobryIndex, state.quiz, index));
                           },
                           child: Container(
                             color: state.czyKlik
@@ -95,35 +127,36 @@ class GameState extends State<Game> {
                   padding: const EdgeInsets.all(12),
                   child: Center(
                     child: Text(
-                      'Punkty ${Quiz.punkty}',
+                      'Punkty ${context.read<QuizBloc>().repository.punkty}',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 )
               ]);
             } else {
-              return Container();
+              return const SizedBox();
             }
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-            final QuizBloc quizBloc = BlocProvider.of<QuizBloc>(context);
-          if (context.read<QuizBloc>().baza.lengthQuiz <= context.read<QuizBloc>().baza.numerPyt) {
+          final QuizBloc quizBloc = BlocProvider.of<QuizBloc>(context);
+          if (context.read<QuizBloc>().repository.lengthQuiz() <=
+              context.read<QuizBloc>().repository.numerPytania) {
             showDialog(
                 context: context,
                 builder: (context) => CustomAlertDialog(
-                      punkty: Quiz.punkty,
+                      punkty: quizBloc.repository.punkty,
                       quizBloc: quizBloc,
                     ));
           } else {
-            BlocProvider.of<QuizBloc>(context)
-                .add(NextQuestion(false, -1,context.read<QuizBloc>().baza.numerPyt));
+            BlocProvider.of<QuizBloc>(context).add(NextQuestion(
+                false, -1, context.read<QuizBloc>().repository.numerPytania));
           }
         },
         tooltip: 'Następne pytanie',
-        child:const Icon(Icons.skip_next),
+        child: const Icon(Icons.skip_next),
       ),
     );
   }

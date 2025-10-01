@@ -7,10 +7,10 @@ class QuizDialog extends StatelessWidget {
   final void Function(Quiz) onSave;
 
    QuizDialog({
-    Key? key,
+    super.key,
     required this.lastQuiz,
     required this.onSave,
-  }) : super(key: key);
+  });
   
   late final TextEditingController _pytanieController = TextEditingController(text: lastQuiz.pytanie);
   late final TextEditingController _odpowiedz1Controller = TextEditingController(text: lastQuiz.odpowiedz1);

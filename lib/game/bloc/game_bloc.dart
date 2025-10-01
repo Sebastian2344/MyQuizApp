@@ -1,44 +1,45 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter_application_1/game/repository/game_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../model/quiz_model.dart';
-import '../../services/baza.dart';
 
 part 'game_event.dart';
 part 'game_state.dart';
 
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
-  final QuizHelper baza;
-  QuizBloc(this.baza) : super(QuizInitial()) { 
+  final GameRepository repository;
+  QuizBloc(this.repository) : super(QuizInitial()) { 
     on<LoadQuestion>((event, emit) async {
           try {
-          Quiz question = await baza.showItem(event.id);
-          baza.numerPyt = event.id;
+          Quiz question = await repository.showItem(event.id);
+          repository.numerPyt(event.id);
           emit(QuizLoaded(question));
         } catch (e) {
-          if(baza.lengthQuiz == 0){
-            emit(Error('Baza pytań jest pusta wyjdź do menu i stwórz pytania'));
+          if(repository.lengthQuiz() == 0){
+            emit(const Error('Baza pytań jest pusta wyjdź do menu i stwórz pytania'));
           }else{
             emit(Error(e.toString()));
           }
         }
     });
     on<NextQuestion>((event, emit) {
-      event.numerPyt++;
-      add(LoadQuestion(event.numerPyt));
+      add(LoadQuestion(event.numerPyt + 1));
     });
     on<QuizReset>((event, emit) {
-      Quiz.punkty = 0;
+      repository.punkty = 0;
       add(LoadQuestion(event.numerPyt));
     });
 
     on<Update>((event, emit) {
-      event.dobryIndex = baza.podajPopOdp(event.quiz);
+      int temp = 0;
+      temp = repository.podajPopOdp(event.quiz);
       if (event.dobryIndex == event.index) {
-        event.dobryIndex = event.index;
-        Quiz.punkty++;
+        temp = event.index;
+        repository.punkty += 1;
       }
-      emit(QuizLoaded(event.quiz,event.czyKlik,event.dobryIndex));
+      emit(QuizLoaded(event.quiz,event.czyKlik,temp));
     });
   }
 }

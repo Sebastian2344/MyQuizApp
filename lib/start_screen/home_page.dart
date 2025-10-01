@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import '../game/screen/game.dart';
-import '../quiz_editor/screens/quiz_editor.dart';
+import 'package:go_router/go_router.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('MENU'),
         centerTitle: true,
       ),
@@ -26,10 +21,9 @@ class _HomePageState extends State<HomePage> {
               width: MediaQuery.of(context).size.width*0.85,
               child: ElevatedButton(
                   style: const ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                      backgroundColor: WidgetStatePropertyAll(Colors.red)),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: ((context) => const Game())));
+                    context.go('/game/true');
                   },
                   child: const Text('Rozpocznij quiz',
                       style: TextStyle(fontSize: 40, color: Colors.white))),
@@ -39,10 +33,21 @@ class _HomePageState extends State<HomePage> {
               width: MediaQuery.of(context).size.width*0.85,
               child: ElevatedButton(
                   style: const ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(Colors.indigo)),
+                      backgroundColor: WidgetStatePropertyAll(Colors.orange)),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: ((context) => const QuizEditor())));
+                    context.go('/game/false');
+                  },
+                  child: const Text('Kontynuuj quiz',
+                      style: TextStyle(fontSize: 40, color: Colors.white))),
+            ),
+            SizedBox(
+              height: 100,
+              width: MediaQuery.of(context).size.width*0.85,
+              child: ElevatedButton(
+                  style: const ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(Colors.indigo)),
+                  onPressed: () {
+                    context.go('/quizEditor');
                   },
                   child: const Center(
                     child: Text('Stwórz swoje pytania',

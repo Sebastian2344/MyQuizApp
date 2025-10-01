@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../model/quiz_model.dart';
 import '../cubit/quiz_editor_cubit.dart';
 import 'quiz_dialog.dart';
@@ -11,7 +12,16 @@ class QuizEditor extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Edytor Quizu'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              context.go('/');
+            },
+          )
+        ],
       ),
       body: BlocBuilder<QuizEditorCubit, QuizEditorState>(
         builder: (context, state) {
@@ -80,8 +90,22 @@ class QuizEditor extends StatelessWidget {
               );
             },
             error: () {
-              return const Center(
-                child: Text('Wystąpił błąd.'),
+              return BlocConsumer<QuizEditorCubit, QuizEditorState>(
+                listener: (context, state) async {
+                  if (state == const QuizEditorState.error()) {
+                    await Future.delayed(Duration(seconds: 2));
+                    if (context.mounted){
+                       context
+                        .read<QuizEditorCubit>()
+                        .showAllQuestion(); // próbuj ponownie załadować pytania
+                    } 
+                  }
+                },
+                builder: (context, state) {
+                  return const Center(
+                    child: Text('Wystąpił błąd. Za 2 sekundy spróbuję ponownie.'),
+                  );
+                },
               );
             },
           );
@@ -94,7 +118,13 @@ class QuizEditor extends StatelessWidget {
     await showDialog(
       context: context,
       builder: (context) => QuizDialog(
-        lastQuiz: Quiz(pytanie: '', odpowiedz1: '', odpowiedz2: '', odpowiedz3: '', odpowiedz4: '', poprawna: ''),
+        lastQuiz: Quiz(
+            pytanie: '',
+            odpowiedz1: '',
+            odpowiedz2: '',
+            odpowiedz3: '',
+            odpowiedz4: '',
+            poprawna: ''),
         onSave: (quiz) {
           context.read<QuizEditorCubit>().addQuestion(quiz);
         },
@@ -102,7 +132,7 @@ class QuizEditor extends StatelessWidget {
     );
   }
 
-  Future<void> _showEditDialog(context, Quiz quiz) async {
+  Future<void> _showEditDialog(BuildContext context, Quiz quiz) async {
     await showDialog(
       context: context,
       builder: (context) => QuizDialog(

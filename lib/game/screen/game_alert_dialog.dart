@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-
+import 'package:go_router/go_router.dart';
 import '../bloc/game_bloc.dart';
-
 
 class CustomAlertDialog extends StatelessWidget {
   final int punkty;
   final QuizBloc quizBloc;
   const CustomAlertDialog(
-      {Key? key,
+      {super.key,
       required this.punkty,
-      required this.quizBloc,})
-      : super(key: key);
+      required this.quizBloc,});
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +29,16 @@ class CustomAlertDialog extends StatelessWidget {
       actions: [
         ElevatedButton(
           onPressed: () {
-            quizBloc.add(QuizReset(false, 1));
+            quizBloc.add(const QuizReset(false, 1));
             Navigator.of(context).pop();
           },
           child: quizBloc.state is Error? const Text('Dokonaj resetu'):const Text('Zagraj jeszcze raz'),
         ),
         ElevatedButton(
           onPressed: () {
-            quizBloc.add(QuizReset(false, 1));
+            quizBloc.add(const QuizReset(false, 1));
             Navigator.of(context).pop();
-            Navigator.of(context).pop();
+            context.go('/');
           },
           child: const Text('Powrót do menu')
         ),

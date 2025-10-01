@@ -1,30 +1,32 @@
 part of 'game_bloc.dart';
 
-abstract class QuizEvent {}
+abstract class QuizEvent {
+  const QuizEvent();
+}
 
 class LoadQuestion extends QuizEvent{
-  int id;
-  LoadQuestion(this.id,);
+  final int id;
+  const LoadQuestion(this.id) : super();
 }
 
 class NextQuestion extends QuizEvent{
-  int numerPyt;
-  int dobryIndex;
-  bool czyKlik;
-  NextQuestion(this.czyKlik,this.dobryIndex,this.numerPyt);
+  final int numerPyt;
+  final int dobryIndex;
+  final bool czyKlik;
+  const NextQuestion(this.czyKlik,this.dobryIndex,this.numerPyt);
 }
 
 class QuizReset extends QuizEvent{
-  bool czyKlik;
-  int numerPyt;
-  QuizReset(this.czyKlik,this.numerPyt);
+  final bool czyKlik;
+  final int numerPyt;
+  const QuizReset(this.czyKlik,this.numerPyt);
 }
 
 class Update extends QuizEvent{
-  bool czyKlik;
-  Quiz quiz;
-  int dobryIndex;
-  int index;
-  Update(this.czyKlik,this.dobryIndex,this.quiz,this.index);
+  final bool czyKlik;
+  final Quiz quiz;
+  final int dobryIndex;
+  final int index;
+  const Update(this.czyKlik,this.dobryIndex,this.quiz,this.index);
 }
 

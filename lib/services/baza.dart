@@ -115,9 +115,9 @@ class QuizHelper {
         .update(_nameTable, data, where: "numer = ?", whereArgs: [quiz.numer]);
   }
 
-  Future<void> delete(Quiz quiz) async {
+  Future<void> delete(int numer) async {
     Database db = await instance.database;
-    await db.delete("mytable1", where: "numer = ?", whereArgs: [quiz.numer]);
+    await db.delete("mytable1", where: "numer = ?", whereArgs: [numer]);
   }
 
   Future<void> deleteAll() async {
