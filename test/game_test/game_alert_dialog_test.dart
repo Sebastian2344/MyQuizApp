@@ -40,7 +40,7 @@ void main(){
     whenListen(quizBloc, Stream.value(QuizInitial()), initialState: QuizInitial());
   });
 
-  Future<void> _pumpDialog(WidgetTester tester) async {
+  Future<void> pumpDialog(WidgetTester tester) async {
     await tester.pumpWidget(
       BlocProvider<QuizBloc>.value(
         value: quizBloc,
@@ -55,7 +55,7 @@ void main(){
 
   testWidgets('Loaded widget with no errors', (WidgetTester tester) async {
     when(() => quizBloc.state).thenReturn(QuizLoaded(FakeQuiz(), false, 1));
-    await _pumpDialog(tester);
+    await pumpDialog(tester);
     expect(find.byType(AlertDialog), findsOneWidget);
     expect(find.text('Gratulacje'), findsOneWidget);
     expect(find.text('Przeszedłeś cały quiz. Twoje punkty: 1. Hurra!'), findsOneWidget);
@@ -66,7 +66,7 @@ void main(){
 
   testWidgets('Loaded widget with errors', (WidgetTester tester) async {
     when(() => quizBloc.state).thenReturn(Error(''));
-    await _pumpDialog(tester);
+    await pumpDialog(tester);
     expect(find.byType(AlertDialog), findsOneWidget);
     expect(find.text('Reset'), findsOneWidget);
     expect(find.text('Ponowne wczytanie pytania'), findsOneWidget);
@@ -79,7 +79,7 @@ void main(){
     
     when(() => quizBloc.state).thenReturn(QuizInitial());
 
-    await _pumpDialog(tester);
+    await pumpDialog(tester);
 
     expect(find.text('Zagraj jeszcze raz'), findsOneWidget);
     expect(find.text('Dokonaj resetu'), findsNothing);
@@ -89,7 +89,7 @@ void main(){
       (WidgetTester tester) async {
     when(() => quizBloc.state).thenReturn(Error(''));
 
-    await _pumpDialog(tester);
+    await pumpDialog(tester);
 
     expect(find.text('Dokonaj resetu'), findsOneWidget);
     expect(find.text('Zagraj jeszcze raz'), findsNothing);
@@ -99,7 +99,7 @@ void main(){
       (WidgetTester tester) async {
     when(() => quizBloc.state).thenReturn(QuizInitial());
 
-    await _pumpDialog(tester);
+    await pumpDialog(tester);
 
     await tester.tap(find.byType(ElevatedButton).first);
     await tester.pumpAndSettle();
