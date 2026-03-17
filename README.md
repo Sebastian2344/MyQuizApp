@@ -1,5 +1,5 @@
 # Quiz
-Aplikacja umożliwia stworzenie quizu i rozegranie go.
+Aplikacja umożliwia stworzenie quizu i rozegranie go. Posiada ona bazę z pytaniami która jest do wypełnienia przez urzytkownika. Pytania można usuwać, dodawać i edytować.
 bibloteki wykorzystane w aplikacji:
   cupertino_icons: ^1.0.2
   sqflite: ^2.2.8+4
